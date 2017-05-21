@@ -1,0 +1,141 @@
+html {
+    height: 100%;
+}
+
+video#bgvid {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+.container {
+    position: relative;
+    border-radius: 25px;
+    background: linear-gradient(rgba(203,207,210,0.8),rgba(255,0,0,0));
+    /*background: rgba(203,207,210,0.5);*/
+    width: 11%;
+    height: 6vw;
+    margin-top: 3%;
+    margin-left: 3%;
+}
+
+.currentDay {
+    position: absolute;
+    margin-top: 10%;
+    margin-left: 15%;
+    font-size: 1vw;
+}
+
+.currentTemp {
+    position: absolute;
+    margin-top: 30%;
+    margin-left: 15%;
+    font-size: 1vw;
+}
+
+.currentIcon {
+    position: absolute;
+    margin-top: 13%;
+    margin-left: 39%;
+    width: 43%;
+    height: auto;
+}
+
+.eventDay{
+
+}
+
+.elementTab{
+  padding:10px;
+}
+
+.textTab{
+  text-align: center;
+  font-size: .9vw;
+}
+
+.navPan{
+  background-color: rgba(203,207,210,.8);
+  border-top-left-radius: 2vw;
+  border-top-right-radius: 2vw;
+}
+
+.tabContent{
+  width: 100%;
+  border-radius: 2vw;
+  height: auto;
+}
+
+.panContent{
+    height: 50%;
+    border-bottom-left-radius: 2vw;
+    border-bottom-right-radius: 2vw;
+    background: linear-gradient(rgba(203,207,210,.8),rgba(255,0,0,0));
+}
+.nav>li>a.active,
+.nav>li>a:hover,
+.nav>li>a:focus {
+   background-color: rgba(203,207,210,.5);
+   border-radius: 2vw;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  border-radius: 5vw;
+  color: white;
+  background-color: rgba(201,201,201,.5);
+}
+
+.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+  color: rgba(203,207,210,.5);
+  background-color: rgba(203,207,210,.5);
+}
+
+.imgNews{
+  opacity: .8;
+  border-radius: 1vw;
+  width: 8vw;
+  height: 10vh;
+  top: 0;
+  margin: .5vw;
+}
+
+.textNews{
+  font-size: 1.5vw;
+  position: absolute;
+  margin-left: 10vw;
+  margin-top: 1.5vh;
+}
+.infoButton{
+  font-size: 1.5vw;
+  margin-top: 1.5vh;
+}
+
+.center{
+  text-align: center;
+}
+
+.scroll{
+  height: 70vh;
+  width: 50vw;
+  overflow: auto;
+}
+
+.titreSeance{
+    margin-left: 17vw;
+    text-align: center;
+}
+
+.objectifSeance{
+
+}
