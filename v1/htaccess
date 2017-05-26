@@ -1,0 +1,13 @@
+RewriteEngine on
+
+RewriteRule api/NoteJour/(.*)$ Api/NoteJour.php/$1 [L]
+
+RewriteRule api/Performance/(.*)$ Api/Performance.php/$1 [L]
+
+RewriteRule api/Exercices/(.*)$ Api/Exercices.php/$1 [L]
+
+RewriteRule api/Seance/(.*)$ Api/Seance.php/$1 [L]
+
+RewriteRule api/AffiliationSeanceExercice/(.*)$ Api/AffiliationSeanceExercice.php/$1 [L]
+
+RewriteRule api/(.*)$ Api/$1.php [L]
