@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr" ng-app="LifeDash">
   <head>
+    <link rel="shortcut icon" href="Assets/favicon.ico" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>LifeDashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
