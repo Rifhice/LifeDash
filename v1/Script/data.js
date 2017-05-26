@@ -1,7 +1,7 @@
 (function(){
-	var myApp = angular.module('LifeDash', []);
+	var myApp = angular.module('LifeDash',[]);
 
-	myApp.controller('DataController', ['$http','$scope','$interval',function($http,$scope,$interval){
+	myApp.controller('DataController', ['$http','$scope','$interval',"$window",function($http,$scope,$interval,$window){
 		var object = this;
 
 		this.weatherInfo = [];
@@ -9,16 +9,21 @@
 		this.newsInfo = [];
 
 		$scope.reload = function(){
-			$http.get("Api/Schedule.php").success(function(data){
+			$http.get("api/Schedule").success(function(data){
 				object.scheduleInfo = data;
 			});
-			$http.get("Api/Weather.php").success(function(data){
+			$http.get("api/Weather").success(function(data){
 				object.weatherInfo = data;
 			});
-			$http.get("Api/News.php").success(function(data){
+			$http.get("api/News").success(function(data){
 				object.newsInfo = data;
 			});
 		};
+
+		this.goTo = function(url){
+				$window.open(url);
+		}
+
 		$scope.reload();
 		$interval($scope.reload, 1080000);
 	}]);
@@ -35,10 +40,11 @@
 		}
 	});
 
-	myApp.controller("InnerPanelController", function(){
+	myApp.controller("InnerPanelController", ['$scope',function($scope){
 		this.tab = 0;
 		this.idCurrentSeance = 0;
 		this.idCurrentExercice = 0;
+		this.idNote;
 
 		this.selectTab = function(setTab){
 			this.tab = setTab;
@@ -64,72 +70,80 @@
 			return this.idCurrentExercice;
 		}
 
+		this.setNote = function(idNote){
+			this.idNote = idNote;
+		}
+
+		this.getNote = function(){
+			return this.idNote;
+		}
+
 		this.isSeanceSelected = function(id) {
 			return id === this.idCurrentSeance;
 		}
 
-		this.addSeance = function(){
+	}]);
 
+	myApp.controller("AuthController",['$http','$scope',function($http,$scope){
+
+		var object = this;
+		this.mdp;
+
+		this.valid = false;
+
+		$scope.checkAuth = function(){
+			$http.get("Api/Auth.php",{
+				params: {
+					mdp : object.mdp,
+				}
+			}).then(function(data){
+				object.valid = data["data"] == "true";
+			},function(){
+				console.log("error");
+			});
 		}
-	});
 
+		this.check = function(){
+			$scope.checkAuth();
+		}
 
-	myApp.controller("SeanceController", ['$http','$scope','$interval','$timeout',function($http,$scope,$interval,$timeout){
+	}]);
+
+	myApp.controller("SeanceController", ['$http','$scope','$timeout','$window',function($http,$scope,$timeout,$window){
 		var object = this;
 
 		this.seanceInfo = [];
 
 		$scope.reload = function(){
-			$http.get("Api/Seance.php",{
-        params: {
-            action: "all",
-        }
-     }).then(function(data){
+			$http.get("api/Seance"
+     ).then(function(data){
 				object.seanceInfo = data;
 			},function(){
-				console.log("Error");
+				alert("Can't load Seance !");
 			});
 		};
 
 		this.addSeance = function(titre,objectif){
-			$http.get("Api/Seance.php",{
-        params: {
-            action: "add",
-						titre: titre,
-						objectif: objectif,
-        }
-     }).then(function(data){
-				$scope.reload();
+			$http.post("api/Seance/"+titre+"/"+objectif).then(function(data){
+			 	object.refresh();
 			},function(){
-				console.log("Error");
+				alert("Can't add Seance !");
 			});
 		};
 
 		this.delete = function(ids){
-			$http.get("Api/Seance.php",{
-        params: {
-            action: "delete",
-						ids: ids,
-        }
-     }).then(function(data){
+			$http.delete("api/Seance/"+ids).then(function(data){
 			 	$scope.reload();
 			},function(){
-				console.log("Error");
+				alert("Can't delete Seance !");
 			});
 		};
 
 		this.update = function(ids,titre,objectif){
-			$http.get("Api/Seance.php",{
-				params: {
-						action: "update",
-						ids: ids,
-						titre: titre,
-						objectif: objectif,
-				}
-		 }).then(function(data){
+			$http.put("api/Seance/"+ids+"/"+titre+"/"+objectif).then(function(data){
 				$scope.reload();
 			},function(){
-				console.log("Error");
+				alert("Can't update Seance !");
 			});
 		};
 
@@ -156,25 +170,16 @@
 		this.affiliations = [];
 
 		$scope.reload = function(){
-			$http.get("Api/AffiliationsSeanceExercice.php",{
-				params: {
-						action: "all",
-				}
-		 }).then(function(data){
-				  object.affiliations = data;
+			$http.get("api/AffiliationSeanceExercice"
+     ).then(function(data){
+				object.affiliations = data;
 			},function(){
 				console.log("Error");
 			});
 		};
 
 		this.delete = function(idseance, idexercice){
-			$http.get("Api/AffiliationsSeanceExercice.php",{
-				params: {
-						action: "delete",
-						ids : idseance,
-						ide : idexercice,
-				}
-		 }).then(function(data){
+			$http.delete("api/AffiliationSeanceExercice/"+idseance+"/"+idexercice).then(function(data){
 				$scope.reload();
 			},function(){
 				console.log("Error");
@@ -182,16 +187,8 @@
 		};
 
 		this.addAffiliation = function(idseance, idexercice){
-			$http.get("Api/AffiliationsSeanceExercice.php",{
-				params: {
-						action: "add",
-						ids : idseance,
-						ide : idexercice,
-				}
-		 }).then(function(data){
-			 	$timeout(function() {
-					$scope.reload();
-				});
+			$http.post("api/AffiliationSeanceExercice/"+idseance+"/"+idexercice).then(function(data){
+			 	object.refresh();
 			},function(){
 				console.log("Error");
 			});
@@ -210,84 +207,44 @@
 		this.typeExercice = [];
 
 		$scope.reload = function(){
-			$http.get("Api/Exercices.php",{
-				params: {
-						action: "all",
-				}
-		 }).then(function(data){
+			$http.get("api/Exercices").then(function(data){
 				object.exercices = data;
 			},function(){
-				console.log("Error");
+				alert("Can't load Exercice !");
 			});
 
-			$http.get("Api/TypeExercices.php",{
-				params: {
-						action: "all",
-				}
-		 }).then(function(data){
+			$http.get("api/TypeExercices").then(function(data){
 				object.typeExercice = data;
 			},function(){
-				console.log("Error");
+				alert("Can't load TypeExercices !");
 			});
 		};
 
 		this.addTimePerf = function(ide,temps,ids){
 			if(ids != undefined){
-				var toadd = {
-						action: "add",
-						type: "temps",
-						ide : ide,
-						temps:temps,
-						seance: ids,
-				}
+				var uri = "api/Performance/temps/"+ide+"/"+temps+"/"+ids;
 			}
 			else{
-				var toadd = {
-						action: "add",
-						type: "temps",
-						ide : ide,
-						temps:temps,
-				}
+				var uri = "api/Performance/temps/"+ide+"/"+temps;
 			}
-			console.log(toadd);
-			$http.get("Api/Performance.php",{
-				params: toadd
-		 }).then(function(data){
+			$http.post(uri).then(function(data){
 
 			},function(){
-				console.log("Error");
+				alert("Can't add Performance !");
 			});
 		}
 
 		this.addChargePerf = function(ide,series,repetition,charge,ids){
 			if(ids != undefined){
-				var toadd = {
-						action: "add",
-						type: "charge",
-						ide : ide,
-						serie: series,
-						repetition:repetition,
-						charge: charge,
-						seance: ids,
-				}
+				var uri = "api/Performance/charge/"+ide+"/"+series+"/"+repetition+"/"+charge+"/"+ids;
 			}
 			else{
-				var toadd = {
-						action: "add",
-						type: "charge",
-						ide : ide,
-						serie: series,
-						repetition:repetition,
-						charge: charge,
-				}
+				var uri = "api/Performance/charge/"+ide+"/"+series+"/"+repetition+"/"+charge;
 			}
-			console.log(toadd);
-			$http.get("Api/Performance.php",{
-				params: toadd
-		 }).then(function(data){
+			$http.post(uri).then(function(data){
 
 			},function(){
-				console.log("Error");
+				alert("Can't add Performance !");
 			});
 		}
 
@@ -314,30 +271,18 @@
 		}
 
 		this.add = function(titre,description,type){
-			$http.get("Api/Exercices.php",{
-				params: {
-						action: "add",
-						titre : titre,
-						description : description,
-						type : type,
-				}
-		 }).then(function(data){
+			$http.post("api/Exercices/"+titre+"/"+description+"/"+type).then(function(data){
 					$scope.reload();
 			},function(){
-				console.log("Error");
+				alert("Can't add Exercices !");
 			});
 		};
 
 		this.delete = function(ide){
-			$http.get("Api/Exercices.php",{
-        params: {
-            action: "delete",
-						ide: ide,
-        }
-     }).then(function(data){
+			$http.delete("api/Exercices/"+ide).then(function(data){
 			 	$scope.reload();
 			},function(){
-				console.log("Error");
+				alert("Can't delete Exercice !");
 			});
 		};
 
@@ -346,17 +291,10 @@
 		}
 
 		this.update = function(ide,titre,description){
-			$http.get("Api/Exercices.php",{
-				params: {
-						action: "update",
-						ide: ide,
-						titre: titre,
-						description: description,
-				}
-		 }).then(function(data){
+			$http.put("api/Exercices/"+ide+"/"+titre+"/"+description).then(function(data){
 				$scope.reload();
 			},function(){
-				console.log("Error");
+				alert("Can't update Exercices !");
 			});
 		};
 
@@ -372,4 +310,140 @@
 
 		$scope.reload();
 	}]);
+
+	myApp.controller("PerformanceController", ['$http','$scope',function($http,$scope){
+		var object = this;
+
+		this.performances = [];
+		this.performanceCharge = [];
+		this.performanceTemps = [];
+		this.affiliationsPerfSeance = [];
+
+		$scope.reload = function(){
+			$http.get("api/Performance").then(function(data){
+				object.performanceCharge = data["data"]["charge"];
+				object.performanceTemps = data["data"]["temps"];
+				object.performances = data["data"]["perf"];
+			},function(){
+				alert("Can't load Performance !");
+			});
+
+			$http.get("api/AffiliationSeancePerformance").then(function(data){
+				object.affiliationsPerfSeance = data["data"];
+				console.log(object.affiliationsPerfSeance);
+			},function(){
+				console.log("Error");
+			});
+
+		};
+
+		this.getIdPerf = function(idSeance){
+			result = [];
+			for (var i = 0; i < object.affiliationsPerfSeance.length; i++) {
+				if(object.affiliationsPerfSeance[i]['IdSeance'] == idSeance){
+					result.push(object.affiliationsPerfSeance[i]["IdPerformance"]);
+				}
+			}
+			return result;
+		}
+
+		this.getIdPerfExercice = function(idExercice){
+			result = [];
+			for (var i = 0; i < object.performances.length; i++) {
+				if(object.performances[i]['IdExercice'] == idExercice){
+					result.push(object.performances[i]["IdPerformance"]);
+				}
+			}
+			return result;
+		}
+
+		this.getPerfIfCharge = function(idPerf){
+			for (var i = 0; i < object.performanceCharge.length; i++) {
+				if(object.performanceCharge[i]["IdPerformance"] ==  idPerf){
+					return object.performanceCharge[i];
+				}
+			}
+		}
+
+		this.getPerfIfTemps = function(idPerf){
+			for (var i = 0; i < object.performanceTemps.length; i++) {
+				if(object.performanceTemps[i]["IdPerformance"] ==  idPerf){
+					return object.performanceTemps[i];
+				}
+			}
+		}
+
+		this.getExercice = function(idp){
+			for (var i = 0; i < object.performances.length; i++) {
+				if(object.performances[i]["IdPerformance"] == idp){
+					return object.performances[i];
+				}
+			}
+		}
+
+		this.refresh = function(){
+			$scope.reload();
+		}
+
+		$scope.reload();
+	}]);
+
+	myApp.controller("NoteJourController", ['$http','$scope','$filter',function($http,$scope,$filter){
+		var object = this;
+
+		this.note = [];
+
+		$scope.reload = function(){
+			$http.get("api/NoteJour").then(function(data){
+				object.note = data;
+			},function(){
+				alert("Can't load Note !");
+			})
+		}
+
+		this.add = function(jour,note,comm){
+			$http.post("api/NoteJour/"+jour+"/"+note+"/"+comm).then(function(data){
+
+			},function(){
+				alert("Can't add Note !");
+			});
+		}
+
+		this.delete = function(jour){
+			$http.delete("api/NoteJour/"+jour).then(function(data){
+				$scope.reload();
+			},function(){
+				alert("Can't delete Note !");
+			});
+		};
+
+		this.refresh = function(){
+			$scope.reload();
+		}
+
+		this.update = function(jour,note,comm){
+			$http.put("api/NoteJour/"+jour+"/"+note+"/"+comm).then(function(data){
+				$scope.reload();
+			},function(){
+				alert("Can't update Note !");
+			});
+		};
+
+		this.convertDate = function(date){
+			return $filter('date')(new Date(date), "yyyy-MM-dd")
+		}
+
+		this.getNote = function(jour){
+			if(object.note["data"] != undefined){
+				for (var i = 0; i < object.note["data"].length; i++) {
+					if(object.note["data"][i]["Jour"] === jour){
+						return object.note["data"][i];
+					}
+				}
+			}
+		}
+
+		$scope.reload();
+	}]);
+
 })();

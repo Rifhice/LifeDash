@@ -2,6 +2,15 @@ html {
     height: 100%;
 }
 
+body{
+  overflow: hidden;
+}
+
+p{
+  font-family: "Times New Roman", Times, serif;
+    font-size: 1.1em;
+}
+
 video#bgvid {
     position: fixed;
     top: 50%;
@@ -125,17 +134,32 @@ video#bgvid {
   text-align: center;
 }
 
-.scroll{
+#scroll{
   height: 70vh;
-  width: 50vw;
+  width: 44vw;
   overflow: auto;
 }
 
 .titreSeance{
     margin-left: 17vw;
     text-align: center;
+    font-size: 1.2em;
+    color: black;
+    font-family: sans-serif;
 }
 
-.objectifSeance{
+.code{
+  width: 45vw;
+    margin-left: 23vw;
+    height: 4vh;
+    margin-top: 48vh;
+    text-align: center;
+}
+.validerCode{
+  margin-left: 40vw;
+  width: 10vw;
+}
 
+.btn{
+  padding: 2px 5px;
 }

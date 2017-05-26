@@ -3,6 +3,7 @@ $servername = "localhost";
 $username = "root";
 $password = "raspberry1302";
 $myDB = "LifeDash";
+$path = "LifeDash/v1/";
 
 try {
     $pdo = new PDO("mysql:host=$servername;dbname=$myDB", $username, $password);

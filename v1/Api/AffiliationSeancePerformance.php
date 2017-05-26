@@ -5,11 +5,10 @@ error_reporting(E_ALL);
 require_once("Connexion.php");
 $result;
 if($_SERVER['REQUEST_METHOD'] === "GET"){ //GET SEANCES
-  $stmt = $pdo->prepare("SELECT * FROM TypeExercice");
-  $stmt->execute();
-  $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $stmt = $pdo->prepare("SELECT * FROM AffiliationPerformanceSeance");
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_OBJ);
 }
-
 
 echo json_encode($result,JSON_UNESCAPED_UNICODE);
 
